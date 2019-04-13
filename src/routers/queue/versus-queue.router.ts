@@ -67,9 +67,10 @@ export class VersusQueueRouter extends BaseRoute {
      *        - in: body
      *          name: versus
      *          required: true
+     *          type: SignUpVersusQueueRequest
      *          schema:
      *            type: object
-     *            ref: '#/definitions/SignUpVersusQueueRequest'
+     *            $ref: '#/definitions/SignUpVersusQueueRequest'
      *      responses:
      *        200:
      *          description: base response if succeed with success on true
