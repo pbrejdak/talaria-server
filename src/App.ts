@@ -17,6 +17,8 @@ import debug = require('debug');
 // import { spec } from './swaggerGen';
 const swaggerDoc = require('./swagger.json');
 
+import * as WebSocketServer from 'ws';
+
 class App {
 
     public express: express.Application;
@@ -28,6 +30,7 @@ class App {
         this.database();
         this.middleware();
         this.routes();
+        this.testWebSocket();
         this.checkAdmin();
     }
 
@@ -145,6 +148,13 @@ class App {
                 console.log('system admin created');
             });
         });
+    }
+
+    private testWebSocket() {
+        const wss = new WebSocketServer.Server({ port: 8008 });
+        wss.on('connection', (ws) => {
+            ws.send("Elo mordo");
+        })
     }
 }
 
