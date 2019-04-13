@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Full-Stack",
+            "configurations": [
+                "Node",
+            ]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Node",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/dist/index.js",
+            "cwd": "${workspaceFolder}",
+            "protocol": "inspector"
+        }
+    ]
+}

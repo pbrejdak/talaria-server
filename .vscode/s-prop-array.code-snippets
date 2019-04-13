@@ -1,0 +1,12 @@
+{
+    "swagger generate array property": {
+        "prefix": "s-prop-array",
+        "body": [
+            " *       editions:",
+            " *         type: array",
+            " *         items:",
+            " *           $ref: '#/definitions/GameSystemEdition'"
+        ],
+        "description": "swagger generate array property"
+    }
+}

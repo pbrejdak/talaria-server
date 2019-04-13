@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        // "esModuleInterop": true,
+        "target": "es6",
+        // "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "baseUrl": "./",
+        "paths": {
+            "*": [
+                "node_modules/*",
+            ]
+        },
+        "removeComments": false,
+    },
+    // Old version
+    // {
+    //     "compilerOptions": {
+    //         "module": "commonjs",
+    //         // "esModuleInterop": true,
+    //         "target": "es6",
+    //         // "noImplicitAny": true,
+    //         "moduleResolution": "node",
+    //         "sourceMap": true,
+    //         "outDir": "dist",
+    //         "baseUrl": "./src",
+    //         "paths": {
+    //             "*": [
+    //                 "node_modules/*",
+    //             ]
+    //         }
+    //     },
+    //     "include": [
+    //         "src/**/*"
+    //     ]
+    // }
+}

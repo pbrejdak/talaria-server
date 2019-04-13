@@ -1,0 +1,11 @@
+{
+    "swagger generate object refproperty": {
+        "prefix": "s-prop-ref",
+        "body": [
+            " *       createdBy:",
+            " *         type: object",
+            " *         $ref: '#/definitions/User'"
+        ],
+        "description": "swagger generate object refproperty"
+    }
+}

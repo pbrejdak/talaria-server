@@ -1,0 +1,10 @@
+{
+  "swagger generate string property": {
+    "prefix": "s-prop-string",
+    "body": [
+      " *       name:",
+      " *         type: string"
+    ],
+    "description": "swagger generate string property"
+  }
+}

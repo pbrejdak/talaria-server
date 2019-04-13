@@ -1,0 +1,12 @@
+{
+    "swagger generate base notation": {
+        "prefix": "s-base",
+        "body": [
+            "/**",
+            " * @swagger",
+            " *",
+            " */"
+        ],
+        "description": "swagger generate base notation"
+    }
+}

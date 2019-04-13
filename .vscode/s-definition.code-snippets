@@ -1,0 +1,14 @@
+{
+    "swagger generate definition notation": {
+        "prefix": "s-definition",
+        "body": [
+            " * definitions:",
+            " *   User:",
+            " *     type: object",
+            " *     properties:",
+            " *       foo:",
+            " *         type: string"
+        ],
+        "description": "swagger generate definition notation"
+    }
+}

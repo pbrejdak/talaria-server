@@ -1,0 +1,40 @@
+{
+    "Mongoose model typescript": {
+        "prefix": "m-model",
+        "scope": "typescript",
+        "body": [
+            "import { Document, Schema, Model, model } from \"mongoose\";",
+            "",
+            "/**",
+            " * @swagger",
+            " *",
+            " * definitions:",
+            " *   ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}:",
+            " *     type: object",
+            " *     properties:",
+            " *       foo:",
+            " *         type: string",
+            " */",
+            "export const ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}Name = \"${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}\";",
+            "",
+            "export interface I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/} extends Document {",
+            "",
+            "}",
+            "",
+            "export interface I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}Model {",
+            "",
+            "}",
+            "",
+            "const ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}Schema = new Schema({",
+            "",
+            "});",
+            "",
+            "export type ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/} = Model<I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}> & I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}Model & I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/};",
+            "export const ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}: ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/} = <${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}>model<I${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/${1:/capitalize}${2:/capitalize}/}>(${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}Name, ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}Schema);",
+            "export const ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}PopulatePaths = [];",
+            "export const ${TM_FILENAME/([a-z]*)-?([a-z]*)(\\.model)*?(\\..*)/$1${2:/capitalize}/}FullPopulatePaths = [];",
+            ""
+        ],
+        "description": "Creates mongoose model in typescript from name <foor>-<bar>.model.ts and <foo>.model.ts"
+    }
+}
