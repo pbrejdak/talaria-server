@@ -7,6 +7,9 @@ import * as passport from 'passport';
 import * as path from 'path';
 import * as swaggerUI from 'swagger-ui-express';
 
+import * as http from 'http';
+import * as socketIO from 'socket.io';
+
 import { default as routers } from './routers';
 import { PassportConfig } from './config/passport';
 import { Request, Response } from 'express';
@@ -151,10 +154,15 @@ class App {
     }
 
     private testWebSocket() {
-        const wss = new WebSocketServer.Server({ port: 8008 });
-        wss.on('connection', (ws) => {
-            ws.send("Elo mordo");
+        const server = http.createServer();
+        const io = socketIO(server);
+        io.on('connection', client => {
+            client.on('event', data => { /* … */ });
+            client.on('disconnect', () => { /* … */ });
+
+            client.emit("test", { "bonus": "bgc" });
         });
+        server.listen(8008);
     }
 }
 

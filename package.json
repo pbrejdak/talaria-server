@@ -21,6 +21,7 @@
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
     "rxjs": "^5.4.2",
+    "socket.io": "^2.2.0",
     "winston": "^2.3.1",
     "ws": "^6.2.1"
   },
@@ -35,6 +36,7 @@
     "@types/nodemailer": "^4.6.5",
     "@types/passport": "^0.3.3",
     "@types/passport-jwt": "^2.0.20",
+    "@types/socket.io": "^2.1.2",
     "@types/swagger-jsdoc": "0.0.2",
     "@types/swagger-ui-express": "^3.0.0",
     "@types/ws": "^6.0.1",
