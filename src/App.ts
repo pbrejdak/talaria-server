@@ -154,9 +154,11 @@ class App {
     }
 
     private testWebSocket() {
-        const server = http.createServer();
+        const server = http.createServer(express());
         const io = socketIO(server);
+        io.on('connect', () => console.log('server started'));
         io.on('connection', client => {
+            console.log('connected');
             client.on('event', data => { /* … */ });
             client.on('disconnect', () => { /* … */ });
 
