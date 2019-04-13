@@ -55,7 +55,7 @@
     "build": "npm run lint && tsc && npm run copy:deployFiles && npm run generate:api",
     "watch-ts": "tsc -w",
     "lint": "tslint --project tslint.json 'src/**/*.ts'",
-    "copy:deployFiles": "./postbuild.sh",
+    "copy:deployFiles": "sh ./postbuild.sh",
     "generate:api": "swagger-jsdoc --definition=swaggerGen.js --output=swagger.json",
     "generate:api:dev": "swagger-jsdoc --definition=dist/swaggerGen.js --output=swagger.json"
   },
