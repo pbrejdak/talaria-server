@@ -154,7 +154,7 @@ class App {
         const wss = new WebSocketServer.Server({ port: 8008 });
         wss.on('connection', (ws) => {
             ws.send("Elo mordo");
-        })
+        });
     }
 }
 
