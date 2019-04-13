@@ -154,9 +154,9 @@ class App {
     }
 
     private testWebSocket() {
-        const server = http.createServer(express());
-        const io = socketIO(server);
-        io.on('connect', () => console.log('server started'));
+        const app = express();
+        const server = http.createServer(app);
+        const io = socketIO.listen(server);
         io.on('connection', client => {
             console.log('connected');
             client.on('event', data => { /* … */ });
@@ -164,7 +164,7 @@ class App {
 
             client.emit("test", { "bonus": "bgc" });
         });
-        server.listen(8008);
+        server.listen(3000);
     }
 }
 
