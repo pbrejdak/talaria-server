@@ -23,6 +23,8 @@ import { mongooseObjectId } from '../Constants';
  *          type: boolean
  *       isActive:
  *          type: boolean
+ *       reputation:
+ *          type: number
  */
 export const userName = "User";
 
@@ -33,6 +35,7 @@ export interface IUser extends Document {
     role: RoleEnum;
     indexable: boolean;
     isActive: boolean;
+    reputation: number;
 }
 
 export interface IUserModel {
@@ -72,6 +75,10 @@ const userSchema = new Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    reputation: {
+        type: Number,
+        default: 0
     },
     updatedAt: {
         type: Date,
