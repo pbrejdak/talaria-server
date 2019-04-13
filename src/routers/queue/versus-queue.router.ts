@@ -1,15 +1,13 @@
 import { Router, Request, Response } from 'express';
 
 import { BaseRoute } from '../BaseRoute';
-import { VersusQueue, IVersusQueue, versusQueuePopulatePaths } from '../../classes/models/queue/versus-queue.model';
-import { ErrorMessageConstants } from '../../classes/errorMessageConstants';
 import { VersusQueueService } from '../../classes/queue/services/versus-queue.service';
 import { SignUpVersusRequest } from '../../classes/contracts/signUpVersusRequest';
 /**
  * @swagger
  *
  * definitions:
- *   SignUpVersusQueue:
+ *   SignUpVersusQueueRequest:
  *     type: object
  *     properties:
  *       activityType:
@@ -43,14 +41,6 @@ import { SignUpVersusRequest } from '../../classes/contracts/signUpVersusRequest
  *           type: array
  *           items:
  *             ref: '#/definitions/VersusQueue'
- *   SignUpVersusQueueRequest:
- *     type: object
- *     required:
- *     - versus
- *     properties:
- *       versus:
- *         type: object
- *         ref: '#/definitions/SignUpVersusQueue'
  * tags:
  * - name: queue
  */
@@ -145,6 +135,7 @@ export class VersusQueueRouter extends BaseRoute {
         router.delete('/signOut', this.guard, (req: Request, res: Response) => {
             const user = req.user;
             const versusId = req.params.id;
+
 
             // VersusQueue.canDelete(versusId, user._id, (err, canDelete) => {
             //     if (err) return this.sendError(res, err, ErrorMessageConstants.WRONG_INPUT);
