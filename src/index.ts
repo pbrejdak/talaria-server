@@ -64,7 +64,7 @@ class Server {
     }
 
     private runServer(): void {
-        this.port = this.normalizePort(process.env.PORT || 3500);
+        this.port = this.normalizePort(process.env.PORT || 3501);
 
         if (this.isHttps) { this.port = 443; } // https;
 

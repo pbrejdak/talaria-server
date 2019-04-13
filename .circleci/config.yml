@@ -41,3 +41,19 @@ jobs:
         
       # run build!
       - run: npm run build
+      - deploy: 
+          name: Deploy over SSH
+          command: |
+              scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r dist/* $SSH_USER@$SSH_HOST:/var/talaria-server/
+      - run:
+          name: Install packages over SSH
+          command: |
+              ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$SSH_HOST "cd /var/talaria-server && npm install"
+      - run:
+          name: Generate api via swagger-jsdoc over SSH
+          command: |
+              ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$SSH_HOST "cd /var/talaria-server && npm run generate:api"
+      - run:
+          name: Restart pm2 application process over SSH
+          command: |
+              ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$SSH_HOST "pm2 status && pm2 restart talaria-server"
