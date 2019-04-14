@@ -3,21 +3,28 @@ import * as http from 'http';
 import * as socketIO from 'socket.io';
 import { newGuid, createRoomPath } from '../../classes/Helper';
 import { SocketClient } from '../../classes/models/socketClient';
+import { IVersusFinishResponse } from './versus-finish.response';
+import { ServerPortEnum } from '../../Constants';
 
 export class VersusRoom {
     constructor(clientIds: string[], distance: number) {
-        this.clientIds = clientIds;
-        this.toConnect = [...clientIds];
+        this._clientIds = clientIds;
+        this._toConnect = [...clientIds];
+        this._distance = distance;
+        this._serverPort = ServerPortEnum.VERSUS_ROOMS;
         this.roomId = newGuid();
-        this._url = createRoomPath(this.roomId, 9010);
+        this._url = createRoomPath(this.roomId, this._serverPort);
         this.createSocket();
     }
 
-    private clientIds: string[];
-    private distance: number;
+    private _clientIds: string[];
+    private _distance: number;
+    private _serverPort: number;
+    private _toConnect: string[];
 
-    private toConnect: string[];
-    private dateStart: Date;
+    private raceStartDate: Date;
+    private raceEndDate: Date;
+
     private clientTimeoutDisconnect: Map<string, any> = new Map<string, any>();
     private joinedClients: Map<string, SocketClient> = new Map<string, SocketClient>();
     private roomId: string;
@@ -25,7 +32,7 @@ export class VersusRoom {
     private _url: string;
     private _io: SocketIO.Server;
 
-    get url() { return `http://51.38.134.31:9010`; }
+    get url() { return `http://51.38.134.31:this._serverPort`; }
     get path() { return this._url; }
 
     private createSocket() {
@@ -36,7 +43,7 @@ export class VersusRoom {
         });
         this._io = io;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
-        server.listen(9010);
+        server.listen(this._serverPort);
     }
 
     private onClientConnected(client: SocketClient) {
@@ -50,7 +57,7 @@ export class VersusRoom {
         client.emit("userConnected", true);
 
         client.on('join', (clientId: string) => {
-            const exists = this.clientIds.indexOf(clientId) > -1;
+            const exists = this._clientIds.indexOf(clientId) > -1;
             if (exists) {
                 const timeout = this.clientTimeoutDisconnect.get(client.id);
                 if (timeout) clearTimeout(timeout);
@@ -64,10 +71,10 @@ export class VersusRoom {
     }
 
     private clientAccepted(clientId: string) {
-        const idx = this.toConnect.indexOf(clientId);
-        if (idx > -1) this.toConnect.splice(idx, 1);
+        const idx = this._toConnect.indexOf(clientId);
+        if (idx > -1) this._toConnect.splice(idx, 1);
 
-        if (this.toConnect.length === 0) this.onClientsReady();
+        if (this._toConnect.length === 0) this.onClientsReady();
     }
 
     private onClientsReady() {
@@ -89,13 +96,37 @@ export class VersusRoom {
             client.on('progress', (progress) => this.onProgressChange(progress, clients, client));
         });
         this.isStarted = true;
-        this.dateStart = new Date();
+        this.raceStartDate = new Date();
         this._io.emit('start', true);
     }
 
-    private onProgressChange(progress: number, clients: SocketClient[], sender: SocketClient) {
+    private onProgressChange(progress: any, clients: SocketClient[], sender: SocketClient) {
         if (!this.isStarted) return;
         const clientsToSend = clients.filter(c => c.clientId !== sender.clientId);
         clientsToSend.forEach(c => c.emit('progressChange', progress));
+
+        if (progress && progress.constructor === String) progress = parseFloat(progress as string);
+
+        if (progress >= this._distance) {
+            this.raceEndDate = new Date();
+            this.isStarted = false;
+            this.raceEnd(sender, clientsToSend[0]);
+        }
+    }
+
+    private raceEnd(winner: SocketClient, loser: SocketClient) {
+        const response = {} as IVersusFinishResponse;
+        response.winnerId = winner.clientId;
+        response.timeEnd = this.raceEndDate;
+        response.timeStart = this.raceStartDate;
+        response.time = this.raceEndDate.getTime() - this.raceStartDate.getTime();
+        this._io.emit('finish', response);
+
+        setTimeout(() => this.closeRoom(), 5000);
+    }
+
+    private closeRoom() {
+        this.joinedClients.forEach(c => c.disconnect());
+        this._io.close();
     }
 }

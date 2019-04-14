@@ -8,6 +8,11 @@ export enum TokenExpiration {
     HOUR = 3600000
 }
 
+export enum ServerPortEnum {
+    VERSUS_QUEUE = 9000,
+    VERSUS_ROOMS = 9010
+}
+
 export const allowedExt: string[] = [
     '.js',
     '.ico',
