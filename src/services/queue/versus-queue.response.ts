@@ -7,6 +7,6 @@ export interface IVersusQeueueResponse {
 }
 
 export interface IVersusQeueuData {
-    isServer: boolean;
-    deviceIp: string;
+    roomUrl: string;
+    clientId: string;
 }

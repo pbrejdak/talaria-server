@@ -39,14 +39,14 @@ export class VersusQueue {
         server.listen(9000);
     }
 
-    private createSocketResponse(type: QueueSocketResponseType, isServer?: boolean, serverIp?: string) {
+    private createSocketResponse(type: QueueSocketResponseType, clientId?: string, roomUrl?: string) {
         const message = {} as IVersusQeueueResponse;
         message.type = type;
         message.status = 200;
 
         const data = {} as IVersusQeueuData;
-        data.deviceIp = serverIp;
-        data.isServer = isServer;
+        data.roomUrl = roomUrl;
+        data.clientId = clientId;
         message.data = data;
 
         return message;
@@ -64,9 +64,9 @@ export class VersusQueue {
 
         } else {
             const matched = this.clients.shift();
-            matched.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, true, null));
+            matched.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, matched.clientId, ""));
 
-            client.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, false, client.conn.remoteAddress));
+            client.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, client.clientId, ""));
         }
     }
 
