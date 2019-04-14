@@ -123,6 +123,7 @@ export class VersusRoom {
     }
 
     private onProgressChange(progress: any, clients: SocketClient[], sender: SocketClient) {
+        console.log(`clientId: ${sender.clientId} isStarted: ${this.isStarted}, progress: ${progress}`);
         if (!this.isStarted) return;
         const clientsToSend = clients.filter(c => c.clientId !== sender.clientId);
         clientsToSend.forEach(c => c.emit('progressChange', progress));

@@ -7,20 +7,15 @@ import * as passport from 'passport';
 import * as path from 'path';
 import * as swaggerUI from 'swagger-ui-express';
 
-import * as http from 'http';
-import * as socketIO from 'socket.io';
-
 import { default as routers } from './routers';
 import { PassportConfig } from './config/passport';
 import { Request, Response } from 'express';
 import { User } from './models/user.model';
 import { allowedExt } from './Constants';
-import { readFile } from 'fs';
 import debug = require('debug');
 // import { spec } from './swaggerGen';
 const swaggerDoc = require('./swagger.json');
 
-import * as WebSocketServer from 'ws';
 
 class App {
 
@@ -33,10 +28,8 @@ class App {
         this.database();
         this.middleware();
         this.routes();
-        this.testWebSocket();
         this.checkAdmin();
     }
-
 
     /**
      * database connection
@@ -151,20 +144,6 @@ class App {
                 console.log('system admin created');
             });
         });
-    }
-
-    private testWebSocket() {
-        const app = express();
-        const server = http.createServer(app);
-        const io = socketIO.listen(server);
-        io.on('connection', client => {
-            console.log('connected');
-            client.on('event', data => { /* … */ });
-            client.on('disconnect', () => { /* … */ });
-
-            client.emit("test", { "bonus": "bgc" });
-        });
-        server.listen(3000);
     }
 }
 
