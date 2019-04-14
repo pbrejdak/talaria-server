@@ -86,7 +86,7 @@ export class VersusQueueRouter extends BaseRoute {
         router.post('/signUp', this.guard, (req: Request, res: Response) => {
             const versus: SignUpVersusRequest = req.body.versus;
 
-            if (VersusQueueService.instance) {
+            if (!VersusQueueService.instance) {
                 VersusQueueService.createInstance();
             }
 
