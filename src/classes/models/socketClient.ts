@@ -1,6 +1,8 @@
 import * as WebSocketServer from 'ws';
 import SocketIO = require('socket.io');
-
+/**
+ * Implementing SocketIO.Socket and add to it clientId and isAlive(deprecated)
+ */
 export class SocketClient implements SocketIO.Socket {
     nsp: SocketIO.Namespace;
     server: SocketIO.Server;

@@ -26,7 +26,17 @@ export class VersusRoom {
     private raceStartDate: Date;
     private raceEndDate: Date;
 
+    /**
+     * Key - client.id (not confuse of client.clientId)
+     * Value - timeout handler 
+     */
     private clientTimeoutDisconnect: Map<string, any> = new Map<string, any>();
+
+    /**
+     * Key - client.clientId
+     * Value - client
+     * Authorized clients that are competitors in room
+     */
     private joinedClients: Map<string, SocketClient> = new Map<string, SocketClient>();
     private roomId: string;
     private isStarted = false;
@@ -89,6 +99,7 @@ export class VersusRoom {
     private onClientsReady() {
         this._io.emit('ready', true);
 
+        // count to 5 (sec) then start race
         this.startCountdown(5);
     }
 
@@ -115,6 +126,7 @@ export class VersusRoom {
     private startRace() {
         const clients = Array.from(this.joinedClients.values());
         clients.forEach((client) => {
+            // when client update his progress
             client.on('progress', (progress) => this.onProgressChange(progress, clients, client));
         });
         this.isStarted = true;
@@ -126,6 +138,7 @@ export class VersusRoom {
         console.log(`clientId: ${sender.clientId} isStarted: ${this.isStarted}, progress: ${progress}`);
         if (!this.isStarted) return;
         const clientsToSend = clients.filter(c => c.clientId !== sender.clientId);
+        // send to other competitors progress of current client
         clientsToSend.forEach(c => c.emit('progressChange', progress));
 
         if (progress && progress.constructor === String) progress = parseFloat(progress as string);
@@ -140,8 +153,8 @@ export class VersusRoom {
     private raceEnd(winner: SocketClient, type: VersusFinishType = VersusFinishType.WIN) {
         const response = {} as IVersusFinishResponse;
 
+        // winner is not defined for versus finish type TIMEOUT
         if (winner) response.winnerId = winner.clientId;
-
 
         response.timeEnd = this.raceEndDate;
         response.timeStart = this.raceStartDate;
