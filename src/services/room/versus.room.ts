@@ -28,7 +28,7 @@ export class VersusRoom {
 
     /**
      * Key - client.id (not confuse of client.clientId)
-     * Value - timeout handler 
+     * Value - timeout handler
      */
     private clientTimeoutDisconnect: Map<string, any> = new Map<string, any>();
 
