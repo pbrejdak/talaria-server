@@ -1,12 +1,16 @@
 // import * as WebSocketServer from 'ws';
 import * as SocketIO from 'socket.io';
-import { newGuid, getWSPath } from '../Helper';
-import { QueueTypeEnum } from '../enums/queue-type.enum';
+import { newGuid, getWSPath } from '../../classes/Helper';
+import { QueueTypeEnum } from '../../classes/enums/queue-type.enum';
 import { IncomingMessage } from 'http';
-import { WebSocketClient } from './webSocketClient';
+import { SocketClient } from './socketClient';
 import { IVersusQeueueResponse, IVersusQeueuData } from './versus-queue.response';
-import { QueueSocketResponseType } from '../enums/queue-socket-response-type.enum';
-import { ActivityType } from '../enums/activity-type.enum';
+import { QueueSocketResponseType } from '../../classes/enums/queue-socket-response-type.enum';
+import { ActivityType } from '../../classes/enums/activity-type.enum';
+
+import * as express from 'express';
+import * as http from 'http';
+import * as socketIO from 'socket.io';
 
 export class VersusQueue {
     constructor(activityType: ActivityType, id: string) {
@@ -22,11 +26,15 @@ export class VersusQueue {
         return this._wsPath;
     }
 
-    private clients: WebSocketClient[] = [];
+    private clients: SocketClient[] = [];
     private pingInterval: any;
 
     private createServer() {
-
+        const app = express();
+        const server = http.createServer(app);
+        const io = socketIO.listen(server);
+        io.on('connection', (client: SocketClient) => this.onClientConnected(client));
+        server.listen(8080);
     }
 
     private createSocketResponse(type: QueueSocketResponseType, isServer?: boolean, serverIp?: string) {
@@ -42,19 +50,37 @@ export class VersusQueue {
         return message;
     }
 
-    private onClientClose(ws: WebSocketClient, code: number, reason: string) {
+    private onClientConnected(client: SocketClient) {
+        console.log('connected');
+        client.on('disconnect', (...args) => this.onClientClose(client, args));
+        client.emit("test", { "bonus": "bgc" });
+
+        client.clientId = newGuid();
+
+        if (this.clients.length === 0) {
+            this.clients.push(client);
+
+        } else {
+            const matched = this.clients.shift();
+            matched.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, true, null));
+
+            client.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, false, client.conn.remoteAddress));
+        }
+    }
+
+    private onClientClose(ws: SocketClient, args: any) {
         this.removeClient(ws);
     }
 
-    private onClientError(ws: WebSocketClient, err: Error) {
+    private onClientError(ws: SocketClient, err: Error) {
         this.removeClient(ws);
     }
 
-    private removeClient(ws: WebSocketClient) {
+    private removeClient(ws: SocketClient) {
         const idx = this.clients.findIndex(c => c.clientId === ws.clientId);
         if (idx > -1) this.clients.splice(idx, 1);
 
-        ws.terminate();
+        ws.disconnect(true);
     }
 
 }
@@ -82,7 +108,7 @@ export class VersusQueue {
     //         }
     //     });
 
-    //     wss.on('connection', (ws: WebSocketClient, request: IncomingMessage) => {
+    //     wss.on('connection', (ws: SocketClient, request: IncomingMessage) => {
     //         ws.on('open', () => {
     //             ws.clientId = newGuid();
     //             ws.remoteAddress = request.connection.remoteAddress;
@@ -104,7 +130,7 @@ export class VersusQueue {
     //     });
 
     //     this.pingInterval = setInterval(() => {
-    //         wss.clients.forEach((ws: WebSocketClient) => {
+    //         wss.clients.forEach((ws: SocketClient) => {
     //             if (ws.isAlive === false) return ws.terminate();
 
     //             ws.isAlive = false;

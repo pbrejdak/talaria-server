@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 
 import { BaseRoute } from '../BaseRoute';
-import { VersusQueueService } from '../../classes/queue/services/versus-queue.service';
+import { VersusQueueService } from '../../services/queue/versus-queue.service';
 import { SignUpVersusRequest } from '../../classes/contracts/signUpVersusRequest';
 /**
  * @swagger
@@ -82,7 +82,7 @@ export class VersusQueueRouter extends BaseRoute {
      *            ref: '#/definitions/ErrorResponse'
      *
      */
-    public addAction(router: Router): void {
+    public signUpAction(router: Router): void {
         router.post('/signUp', this.guard, (req: Request, res: Response) => {
             const versus: SignUpVersusRequest = req.body.versus;
 
@@ -94,63 +94,6 @@ export class VersusQueueRouter extends BaseRoute {
                 .then(response => {
                     this.sendResponse(response, res, 200);
                 });
-        });
-    }
-
-    /**
-     * @swagger
-     * /queue/versus/signOut:
-     *    delete:
-     *      operationId: deleteVersusQueue
-     *      tags:
-     *        - queue
-     *      description: This should delete VersusQueue
-     *      produces:
-     *        - application/json
-     *      parameters:
-     *        - in: header
-     *          name: authorization
-     *          type: string
-     *          required: true
-     *          description: JWT auth
-     *        - in: path
-     *          name: id
-     *          required: true
-     *          type: string
-     *          description: ID of VersusQueue
-     *      responses:
-     *        200:
-     *          description: base response if succeed with success on true
-     *          schema:
-     *            ref: '#/definitions/BaseResponse'
-     *        400:
-     *          description: something went wrong with request body
-     *          schema:
-     *            ref: '#/definitions/ErrorResponse'
-     *        403:
-     *          description: user does not have permissions to delete VersusQueue
-     *          schema:
-     *            ref: '#/definitions/BaseResponse'
-     */
-    public deleteAction(router: Router): void {
-        router.delete('/signOut', this.guard, (req: Request, res: Response) => {
-            const user = req.user;
-            const versusId = req.params.id;
-
-
-            // VersusQueue.canDelete(versusId, user._id, (err, canDelete) => {
-            //     if (err) return this.sendError(res, err, ErrorMessageConstants.WRONG_INPUT);
-
-            //     if (canDelete) {
-            //         VersusQueue.deleteOne({ _id: versusId }, (err) => {
-            //             if (err) return this.sendError(res, err, ErrorMessageConstants.UNKOWN_ERROR);
-
-            //             this.sendResponse({ success: true }, res);
-            //         });
-            //     } else {
-            //         this.sendNotAuthorized(res);
-            //     }
-            // });
         });
     }
 }

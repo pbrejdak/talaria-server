@@ -71,3 +71,5 @@ export const newGuid = (): string => {
 export const getWSPath = (type: QueueTypeEnum, activityType: ActivityType, id: string) => {
     return `/queue/${QueueTypeEnum[type]}/${ActivityType[activityType]}/${id}`;
 };
+
+export const createRoomPath = (id: string) => `/rooms/versus/${id}`;

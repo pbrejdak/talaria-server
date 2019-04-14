@@ -1,7 +1,7 @@
-import { VersusQueue } from "../versus.queue";
-import { IUser } from "../../../models/user.model";
-import { SignUpVersusRequest } from "../../contracts/signUpVersusRequest";
-import { ActivityType } from "../../enums/activity-type.enum";
+import { VersusQueue } from "./versus.queue";
+import { IUser } from "../../models/user.model";
+import { SignUpVersusRequest } from "../../classes/contracts/signUpVersusRequest";
+import { ActivityType } from "../../classes/enums/activity-type.enum";
 
 export class VersusQueueService {
     private static _instance: VersusQueueService;

@@ -1,4 +1,4 @@
-import { QueueSocketResponseType } from "../enums/queue-socket-response-type.enum";
+import { QueueSocketResponseType } from "../../classes/enums/queue-socket-response-type.enum";
 
 export interface IVersusQeueueResponse {
     status: number;
