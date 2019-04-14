@@ -15,7 +15,7 @@ import * as socketIO from 'socket.io';
 export class VersusQueue {
     constructor(activityType: ActivityType, id: string) {
         this._id = id;
-        this._wsPath = getWSPath(QueueTypeEnum.VERSUS, activityType, id);
+        this._wsPath = getWSPath(QueueTypeEnum.VERSUS, activityType, id, 9000);
         this.createServer();
     }
 
@@ -36,7 +36,7 @@ export class VersusQueue {
             path: this._wsPath
         });
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
-        server.listen(8090);
+        server.listen(9000);
     }
 
     private createSocketResponse(type: QueueSocketResponseType, isServer?: boolean, serverIp?: string) {
