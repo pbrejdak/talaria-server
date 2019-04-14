@@ -3,7 +3,7 @@ import * as SocketIO from 'socket.io';
 import { newGuid, getWSPath } from '../../classes/Helper';
 import { QueueTypeEnum } from '../../classes/enums/queue-type.enum';
 import { IncomingMessage } from 'http';
-import { SocketClient } from './socketClient';
+import { SocketClient } from '../../classes/models/socketClient';
 import { IVersusQeueueResponse, IVersusQeueuData } from './versus-queue.response';
 import { QueueSocketResponseType } from '../../classes/enums/queue-socket-response-type.enum';
 import { ActivityType } from '../../classes/enums/activity-type.enum';

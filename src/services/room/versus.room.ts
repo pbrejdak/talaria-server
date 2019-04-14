@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as http from 'http';
 import * as socketIO from 'socket.io';
 import { newGuid, createRoomPath } from '../../classes/Helper';
-import { SocketClient } from '../queue/socketClient';
+import { SocketClient } from '../../classes/models/socketClient';
 
 export class VersusRoom {
     constructor(clientIds: string[], distance: number) {
@@ -43,6 +43,9 @@ export class VersusRoom {
             this.clientTimeoutDisconnect.delete(client.id);
         }, 3000);
         this.clientTimeoutDisconnect.set(client.id, timeout);
+
+        client.emit("userConnected", true);
+
         client.on('join', (clientId: string) => {
             const exists = this.clientIds.indexOf(clientId) > -1;
             if (exists) {
