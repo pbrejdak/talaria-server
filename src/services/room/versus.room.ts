@@ -31,7 +31,9 @@ export class VersusRoom {
     private createSocket() {
         const app = express();
         const server = http.createServer(app);
-        const io = socketIO.listen(server);
+        const io = socketIO.listen(server, {
+            path: this._url
+        });
         this._io = io;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
         server.listen(9010);
