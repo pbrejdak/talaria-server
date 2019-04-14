@@ -5,6 +5,7 @@ import { newGuid, createRoomPath } from '../../classes/Helper';
 import { SocketClient } from '../../classes/models/socketClient';
 import { IVersusFinishResponse } from './versus-finish.response';
 import { ServerPortEnum } from '../../Constants';
+import { VersusFinishType } from '../../classes/enums/versus-finish-type.enum';
 
 export class VersusRoom {
     constructor(clientIds: string[], distance: number) {
@@ -32,7 +33,7 @@ export class VersusRoom {
     private _url: string;
     private _io: SocketIO.Server;
 
-    get url() { return `http://51.38.134.31:this._serverPort`; }
+    get url() { return `http://51.38.134.31:${this._serverPort}`; }
     get path() { return this._url; }
 
     private createSocket() {
@@ -44,6 +45,12 @@ export class VersusRoom {
         this._io = io;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
         server.listen(this._serverPort);
+
+        setTimeout(() => {
+            if (this.isStarted) return;
+
+            this.raceEnd(null, VersusFinishType.TIMEOUT);
+        }, 15000);
     }
 
     private onClientConnected(client: SocketClient) {
@@ -55,6 +62,8 @@ export class VersusRoom {
         this.clientTimeoutDisconnect.set(client.id, timeout);
 
         client.emit("userConnected", true);
+
+        client.on('disconnect', () => this.onClientDisconnected(client));
 
         client.on('join', (clientId: string) => {
             const exists = this._clientIds.indexOf(clientId) > -1;
@@ -81,6 +90,19 @@ export class VersusRoom {
         this._io.emit('ready', true);
 
         this.startCountdown(5);
+    }
+
+    private onClientDisconnected(client: SocketClient) {
+        if (this.clientTimeoutDisconnect.has(client.id)) {
+            clearTimeout(this.clientTimeoutDisconnect.get(client.id));
+            this.clientTimeoutDisconnect.delete(client.id);
+        }
+
+        if (client.clientId) {
+            if (this._clientIds.indexOf(client.clientId) > -1) {
+                this.forceFinishRace(client);
+            }
+        }
     }
 
     private startCountdown(number: number) {
@@ -110,19 +132,34 @@ export class VersusRoom {
         if (progress >= this._distance) {
             this.raceEndDate = new Date();
             this.isStarted = false;
-            this.raceEnd(sender, clientsToSend[0]);
+            this.raceEnd(sender);
         }
     }
 
-    private raceEnd(winner: SocketClient, loser: SocketClient) {
+    private raceEnd(winner: SocketClient, type: VersusFinishType = VersusFinishType.WIN) {
         const response = {} as IVersusFinishResponse;
-        response.winnerId = winner.clientId;
+
+        if (winner) response.winnerId = winner.clientId;
+
+
         response.timeEnd = this.raceEndDate;
         response.timeStart = this.raceStartDate;
-        response.time = this.raceEndDate.getTime() - this.raceStartDate.getTime();
+
+        if (type === VersusFinishType.WIN) response.time = this.raceEndDate.getTime() - this.raceStartDate.getTime();
+        response.type = type;
         this._io.emit('finish', response);
 
         setTimeout(() => this.closeRoom(), 5000);
+    }
+
+    private forceFinishRace(disconnectedClient: SocketClient) {
+        const winnerId = this._clientIds.find(id => id !== disconnectedClient.clientId);
+        const winner = this.joinedClients.get(winnerId);
+        if (this.isStarted) {
+            this.raceEnd(winner, VersusFinishType.DISCONNECTED);
+        } else {
+            this.raceEnd(winner, VersusFinishType.CANCEL);
+        }
     }
 
     private closeRoom() {
