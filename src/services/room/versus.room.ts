@@ -9,7 +9,7 @@ export class VersusRoom {
         this.clientIds = clientIds;
         this.toConnect = [...clientIds];
         this.roomId = newGuid();
-        this._url = createRoomPath(this.roomId);
+        this._url = createRoomPath(this.roomId, 9010);
         this.createSocket();
     }
 
@@ -33,7 +33,7 @@ export class VersusRoom {
         const io = socketIO.listen(server);
         this._io = io;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
-        server.listen(8080);
+        server.listen(9010);
     }
 
     private onClientConnected(client: SocketClient) {

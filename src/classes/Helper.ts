@@ -69,7 +69,7 @@ export const newGuid = (): string => {
 };
 
 export const getWSPath = (type: QueueTypeEnum, activityType: ActivityType, id: string, port: number) => {
-    return `http://51.38.134.31:${port}/v1/queue/${QueueTypeEnum[type]}/${ActivityType[activityType]}/${id}`;
+    return `/queue/${QueueTypeEnum[type]}/${ActivityType[activityType]}/${id}`;
 };
 
-export const createRoomPath = (id: string) => `/rooms/versus/${id}`;
+export const createRoomPath = (id: string, port: number) => `http://51.38.134.31:${port}/v1/rooms/versus/${id}`;

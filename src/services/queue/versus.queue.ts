@@ -11,6 +11,7 @@ import { ActivityType } from '../../classes/enums/activity-type.enum';
 import * as express from 'express';
 import * as http from 'http';
 import * as socketIO from 'socket.io';
+import { VersusRoomService } from '../room/versus-room.service';
 
 export class VersusQueue {
     constructor(activityType: ActivityType, id: string) {
@@ -23,7 +24,7 @@ export class VersusQueue {
     private _wsPath: string;
 
     get wsPath(): string {
-        return this._wsPath;
+        return `http://51.38.134.31:9000${this._wsPath}`;
     }
 
     private clients: SocketClient[] = [];
@@ -63,6 +64,9 @@ export class VersusQueue {
             this.clients.push(client);
 
         } else {
+            if (!VersusRoomService.instance) VersusRoomService.createInstance();
+
+
             const matched = this.clients.shift();
             matched.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, matched.clientId, ""));
 
