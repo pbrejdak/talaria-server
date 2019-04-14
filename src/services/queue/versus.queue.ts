@@ -32,9 +32,11 @@ export class VersusQueue {
     private createServer() {
         const app = express();
         const server = http.createServer(app);
-        const io = socketIO.listen(server);
+        const io = socketIO.listen(server, {
+            path: this._wsPath
+        });
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
-        server.listen(8080);
+        server.listen(8090);
     }
 
     private createSocketResponse(type: QueueSocketResponseType, isServer?: boolean, serverIp?: string) {
