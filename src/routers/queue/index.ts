@@ -4,8 +4,8 @@
 import * as express from 'express';
 import { VersusQueueRouter } from './versus-queue.router';
 
-const queue = express.Router();
+const queueRouter = express.Router();
 // normal router
-queue.use('/versus', new VersusQueueRouter().getRoutes());
+queueRouter.use('/versus', new VersusQueueRouter().getRoutes());
 
-export default queue;
+export default queueRouter;
