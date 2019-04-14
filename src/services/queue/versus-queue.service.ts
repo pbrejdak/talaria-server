@@ -52,11 +52,11 @@ export class VersusQueueService {
         return this.queueSockets.get(activityType).get(range);
     }
 
-    addToQueue(user: IUser, versus: SignUpVersusRequest): Promise<string> {
+    addToQueue(user: IUser, versus: SignUpVersusRequest): Promise<any> {
         return new Promise((resolve, reject) => {
             const queue = this.getQueue(versus.activityType, user.reputation);
 
-            resolve(queue.wsPath);
+            resolve({ url: queue.url, path: queue.wsPath });
         });
     }
 

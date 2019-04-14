@@ -72,4 +72,4 @@ export const getWSPath = (type: QueueTypeEnum, activityType: ActivityType, id: s
     return `/queue/${QueueTypeEnum[type]}/${ActivityType[activityType]}/${id}`;
 };
 
-export const createRoomPath = (id: string, port: number) => `http://51.38.134.31:${port}/v1/rooms/versus/${id}`;
+export const createRoomPath = (id: string, port: number) => `/rooms/versus/${id}`;

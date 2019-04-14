@@ -24,7 +24,11 @@ export class VersusQueue {
     private _wsPath: string;
 
     get wsPath(): string {
-        return `http://51.38.134.31:9000${this._wsPath}`;
+        return this._wsPath;
+    }
+
+    get url() {
+        return `http://51.38.134.31:9000`;
     }
 
     private clients: SocketClient[] = [];
@@ -36,6 +40,7 @@ export class VersusQueue {
         const io = socketIO.listen(server, {
             path: this._wsPath
         });
+        console.log(`Current connection ip ${this._wsPath}`);
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
         server.listen(9000);
     }

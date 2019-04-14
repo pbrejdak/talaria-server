@@ -92,7 +92,7 @@ export class VersusQueueRouter extends BaseRoute {
 
             VersusQueueService.instance.addToQueue(req.user, versus)
                 .then(response => {
-                    this.sendResponse({ path: response }, res, 200);
+                    this.sendResponse(response, res, 200);
                 });
         });
     }
