@@ -38,6 +38,7 @@ export class VersusRoom {
     }
 
     private onClientConnected(client: SocketClient) {
+        console.log(`connected ${client.conn.remoteAddress}`);
         const timeout = setTimeout(() => {
             client.disconnect();
             this.clientTimeoutDisconnect.delete(client.id);
