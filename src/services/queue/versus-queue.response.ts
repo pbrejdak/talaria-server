@@ -9,4 +9,5 @@ export interface IVersusQeueueResponse {
 export interface IVersusQeueuData {
     roomUrl: string;
     clientId: string;
+    path: string;
 }

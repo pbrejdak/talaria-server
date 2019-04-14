@@ -12,15 +12,17 @@ import * as express from 'express';
 import * as http from 'http';
 import * as socketIO from 'socket.io';
 import { VersusRoomService } from '../room/versus-room.service';
+import { VersusRoom } from '../room/versus.room';
 
 export class VersusQueue {
-    constructor(activityType: ActivityType, id: string) {
+    constructor(activityType: ActivityType, id: string, distance: number) {
         this._id = id;
         this._wsPath = getWSPath(QueueTypeEnum.VERSUS, activityType, id, 9000);
         this.createServer();
     }
 
     private _id: string;
+    private _distance: number;
     private _wsPath: string;
 
     get wsPath(): string {
@@ -45,7 +47,7 @@ export class VersusQueue {
         server.listen(9000);
     }
 
-    private createSocketResponse(type: QueueSocketResponseType, clientId?: string, roomUrl?: string) {
+    private createSocketResponse(type: QueueSocketResponseType, clientId?: string, roomUrl?: string, path?: string) {
         const message = {} as IVersusQeueueResponse;
         message.type = type;
         message.status = 200;
@@ -53,6 +55,7 @@ export class VersusQueue {
         const data = {} as IVersusQeueuData;
         data.roomUrl = roomUrl;
         data.clientId = clientId;
+        data.path = path;
         message.data = data;
 
         return message;
@@ -71,11 +74,14 @@ export class VersusQueue {
         } else {
             if (!VersusRoomService.instance) VersusRoomService.createInstance();
 
-
             const matched = this.clients.shift();
-            matched.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, matched.clientId, ""));
-
-            client.emit('matched', this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, client.clientId, ""));
+            VersusRoomService.instance.createRoom([client.clientId, matched.clientId], this._distance)
+                .then((res: VersusRoom) => {
+                    matched.emit('matched',
+                        this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, matched.clientId, res.url, res.path));
+                    client.emit('matched',
+                        this.createSocketResponse(QueueSocketResponseType.MATCH_FOUND, client.clientId, res.url, res.path));
+                });
         }
     }
 

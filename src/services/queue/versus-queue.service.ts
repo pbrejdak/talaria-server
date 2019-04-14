@@ -35,18 +35,18 @@ export class VersusQueueService {
         return "0-50";
     }
 
-    private getQueue(activityType: ActivityType, reputation: number) {
+    private getQueue(activityType: ActivityType, reputation: number, distance: number) {
         const range = this.getUserRange(reputation);
         if (!this.queueSockets.has(activityType)) {
             const map = new Map<string, VersusQueue>();
-            map.set(range, new VersusQueue(activityType, range));
+            map.set(range, new VersusQueue(activityType, range, distance));
 
             this.queueSockets.set(activityType, map);
             return map.get(range);
         }
 
         if (!this.queueSockets.get(activityType).has(range)) {
-            this.queueSockets.get(activityType).set(range, new VersusQueue(activityType, range));
+            this.queueSockets.get(activityType).set(range, new VersusQueue(activityType, range, distance));
         }
 
         return this.queueSockets.get(activityType).get(range);
@@ -54,7 +54,7 @@ export class VersusQueueService {
 
     addToQueue(user: IUser, versus: SignUpVersusRequest): Promise<any> {
         return new Promise((resolve, reject) => {
-            const queue = this.getQueue(versus.activityType, user.reputation);
+            const queue = this.getQueue(versus.activityType, user.reputation, versus.distance);
 
             resolve({ url: queue.url, path: queue.wsPath });
         });

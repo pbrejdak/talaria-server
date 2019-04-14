@@ -25,7 +25,8 @@ export class VersusRoom {
     private _url: string;
     private _io: SocketIO.Server;
 
-    get url() { return `http://51.38.134.31:9010${this._url}`; }
+    get url() { return `http://51.38.134.31:9010`; }
+    get path() { return this._url; }
 
     private createSocket() {
         const app = express();
