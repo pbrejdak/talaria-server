@@ -77,7 +77,7 @@ export class VersusRoom {
     }
 
     private startCountdown(number: number) {
-        if (number === 0) this.startRace();
+        if (number === 0) return this.startRace();
 
         this._io.emit('countdown', number);
         setTimeout(() => this.startCountdown(--number), 1000);
