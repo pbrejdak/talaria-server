@@ -71,12 +71,14 @@ export class VersusQueue {
         client.clientId = newGuid();
 
         if (this.clients.length === 0) {
+            console.log(`Client is waiting for partner to match. clientId: ${client.clientId}`);
             this.clients.push(client);
 
         } else {
             if (!VersusRoomService.instance) VersusRoomService.createInstance();
 
             const matched = this.clients.shift();
+            console.log(`Client matched. client: ${client.clientId} matchedClient: ${client.clientId}`);
             VersusRoomService.instance.createRoom([client.clientId, matched.clientId], this._distance)
                 .then((res: VersusRoom) => {
                     matched.emit('matched',
