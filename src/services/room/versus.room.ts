@@ -8,10 +8,11 @@ import { ServerPortEnum } from '../../Constants';
 import { VersusFinishType } from '../../classes/enums/versus-finish-type.enum';
 
 export class VersusRoom {
-    constructor(clientIds: string[], distance: number) {
+    constructor(clientIds: string[], distance: number, httpServer: http.Server) {
         this._clientIds = clientIds;
         this._toConnect = [...clientIds];
         this._distance = distance;
+        this._httpServer = httpServer;
         this._serverPort = ServerPortEnum.VERSUS_ROOMS;
         this.roomId = newGuid();
         this._url = createRoomPath(this.roomId, this._serverPort);
@@ -22,6 +23,7 @@ export class VersusRoom {
     private _distance: number;
     private _serverPort: number;
     private _toConnect: string[];
+    private _httpServer: http.Server;
 
     private raceStartDate: Date;
     private raceEndDate: Date;
@@ -47,14 +49,12 @@ export class VersusRoom {
     get path() { return this._url; }
 
     private createSocket() {
-        const app = express();
-        const server = http.createServer(app);
-        const io = socketIO.listen(server, {
+        const io = socketIO.listen(this._httpServer, {
             path: this._url
         });
+
         this._io = io;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
-        server.listen(this._serverPort);
 
         setTimeout(() => {
             if (this.isStarted) return;
