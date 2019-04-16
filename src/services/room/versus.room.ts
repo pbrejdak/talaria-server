@@ -8,22 +8,20 @@ import { ServerPortEnum } from '../../Constants';
 import { VersusFinishType } from '../../classes/enums/versus-finish-type.enum';
 
 export class VersusRoom {
-    constructor(clientIds: string[], distance: number, httpServer: http.Server) {
+    constructor(clientIds: string[], distance: number, io: SocketIO.Server) {
         this._clientIds = clientIds;
         this._toConnect = [...clientIds];
         this._distance = distance;
-        this._httpServer = httpServer;
         this._serverPort = ServerPortEnum.VERSUS_ROOMS;
         this.roomId = newGuid();
-        this._url = createRoomPath(this.roomId, this._serverPort);
-        this.createSocket();
+        this._url = `/${this.roomId}`;
+        this.createSocket(io);
     }
 
     private _clientIds: string[];
     private _distance: number;
     private _serverPort: number;
     private _toConnect: string[];
-    private _httpServer: http.Server;
 
     private raceStartDate: Date;
     private raceEndDate: Date;
@@ -43,17 +41,15 @@ export class VersusRoom {
     private roomId: string;
     private isStarted = false;
     private _url: string;
-    private _io: SocketIO.Server;
+    private _ioNsp: SocketIO.Namespace;
 
     get url() { return `http://51.38.134.31:${this._serverPort}`; }
     get path() { return this._url; }
 
-    private createSocket() {
-        const io = socketIO.listen(this._httpServer, {
-            path: this._url
-        });
+    private createSocket(io: SocketIO.Server) {
+        const ioNsp = io.of(`${this._url}`);
 
-        this._io = io;
+        this._ioNsp = ioNsp;
         io.on('connection', (client: SocketClient) => this.onClientConnected(client));
 
         setTimeout(() => {
@@ -97,7 +93,7 @@ export class VersusRoom {
     }
 
     private onClientsReady() {
-        this._io.emit('ready', true);
+        this._ioNsp.emit('ready', true);
 
         // count to 5 (sec) then start race
         this.startCountdown(5);
@@ -119,7 +115,7 @@ export class VersusRoom {
     private startCountdown(number: number) {
         if (number === 0) return this.startRace();
 
-        this._io.emit('countdown', number);
+        this._ioNsp.emit('countdown', number);
         setTimeout(() => this.startCountdown(--number), 1000);
     }
 
@@ -131,7 +127,7 @@ export class VersusRoom {
         });
         this.isStarted = true;
         this.raceStartDate = new Date();
-        this._io.emit('start', true);
+        this._ioNsp.emit('start', true);
     }
 
     private onProgressChange(progress: any, clients: SocketClient[], sender: SocketClient) {
@@ -161,7 +157,7 @@ export class VersusRoom {
 
         if (type === VersusFinishType.WIN) response.time = this.raceEndDate.getTime() - this.raceStartDate.getTime();
         response.type = type;
-        this._io.emit('finish', response);
+        this._ioNsp.emit('finish', response);
 
         setTimeout(() => this.closeRoom(), 5000);
     }
@@ -178,6 +174,6 @@ export class VersusRoom {
 
     private closeRoom() {
         this.joinedClients.forEach(c => c.disconnect(true));
-        this._io.close();
+        this._ioNsp.removeAllListeners();
     }
 }
